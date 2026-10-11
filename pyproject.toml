@@ -1,0 +1,16 @@
+[project]
+name = "podcast-from-transcript"
+version = "0.1.0"
+description = "Generate podcast-style audio from transcript files using Gemini TTS."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "google-genai>=2.25.0",
+]
+
+[project.scripts]
+podcast-from-transcript = "podcast_from_transcript.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
