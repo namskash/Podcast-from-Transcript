@@ -1,2 +1,8 @@
+# Local/generated files
+.venv/
+__pycache__/
+*.egg-info/
+outputs/
+
 # Raw Transcripts don't belong in the repo
 docs/transcripts/*.md
