@@ -6,4 +6,4 @@ outputs/**/*.wav
 outputs/**/*.mp3
 
 # Raw Transcripts don't belong in the repo
-docs/transcripts/*.md
+transcripts/*.md
