@@ -15,7 +15,11 @@ from google.genai import types
 
 DEFAULT_MODEL = "gemini-3.8-flash-tts"
 DEFAULT_VOICE = "Ludo"
+DEFAULT_SECOND_VOICE = "Tari"
 SPEAKER_LINE_RE = re.compile(r"^\s*([A-Za-z][\w .'-]{0,48})\s*:\s*(.+?)\s*$")
+HEADING_RE = re.compile(r"^\s{0,3}#{1,6}\s+")
+HTML_COMMENT_RE = re.compile(r"<!--.*?-->", re.DOTALL)
+PAUSE_RE = re.compile(r"^\s*\[\s*pause\s+(\d+)\s*seconds?\s*\]\s*$", re.IGNORECASE)
 
 
 @dataclass(frozen=True)
@@ -33,6 +37,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--api-key-env", default="GEMINI_API_KEY", help="Env var holding Gemini API key")
     parser.add_argument("--model", default=DEFAULT_MODEL, help="Gemini TTS model")
     parser.add_argument("--voice", default=DEFAULT_VOICE, help="Default/prebuilt voice name")
+    parser.add_argument("--second-speaker", dest="second_voice", default=DEFAULT_SECOND_VOICE, help="Default voice for a second detected speaker")
     parser.add_argument(
         "--speaker",
         action="append",
@@ -69,7 +74,12 @@ def parse_speakers(values: Iterable[str]) -> dict[str, str]:
     return mapping
 
 
+def clean_transcript(text: str) -> str:
+    return HTML_COMMENT_RE.sub("", text)
+
+
 def transcript_to_turns(text: str) -> list[Turn]:
+    text = clean_transcript(text)
     turns: list[Turn] = []
     buffer: list[str] = []
     current_speaker: str | None = None
@@ -86,6 +96,14 @@ def transcript_to_turns(text: str) -> list[Turn]:
         if not line:
             if buffer:
                 buffer.append("")
+            continue
+        if HEADING_RE.match(line):
+            continue
+        pause_match = PAUSE_RE.match(line)
+        if pause_match:
+            flush()
+            turns.append(Turn(None, f"<pause {pause_match.group(1)} seconds>"))
+            current_speaker = None
             continue
         match = SPEAKER_LINE_RE.match(line)
         if match:
@@ -146,18 +164,50 @@ def multi_speaker_config(speaker_voices: dict[str, str], fallback_voice: str) ->
     )
 
 
-def render_chunk_text(turns: list[Turn], style: str, multi_speaker: bool) -> str:
+def render_turn(turn: Turn, multi_speaker: bool) -> str:
+    if turn.text.startswith("<pause "):
+        return turn.text
     if multi_speaker:
-        body = "\n".join(f"{turn.speaker or 'Narrator'}: {turn.text}" for turn in turns)
-        return f"Read this as a polished podcast conversation. Style: {style}.\n\n{body}"
-    body = "\n\n".join(turn.text for turn in turns)
-    return f"Read this as polished podcast audio. Style: {style}.\n\n{body}"
+        return f"{turn.speaker or 'Narrator'}: {turn.text}"
+    return turn.text
 
 
-def generate_audio(client: genai.Client, model: str, text: str, speech_config: types.SpeechConfig) -> bytes:
+def render_chunk_text(turns: list[Turn], style: str, multi_speaker: bool) -> str:
+    body = "\n".join(render_turn(turn, multi_speaker) for turn in turns)
+    instruction = (
+        "Read this as a polished podcast conversation. "
+        if multi_speaker
+        else "Read this as polished podcast audio. "
+    )
+    return (
+        f"{instruction}Style: {style}. "
+        "Do not read speaker labels, headings, Markdown, HTML comments, or pause tags aloud. "
+        "For tags like <pause 3 seconds>, insert that amount of silence.\n\n"
+        f"{body}"
+    )
+
+
+def build_multi_speaker_contents(turns: list[Turn], style: str) -> list[types.Content]:
+    parts: list[types.Part] = []
+    last_speaker: str | None = None
+    for turn in turns:
+        speaker = turn.speaker or last_speaker
+        if not speaker:
+            continue
+        last_speaker = speaker
+        parts.append(
+            types.Part(
+                text=turn.text,
+                speech_metadata=types.SpeechMetadata(speaker=speaker, style=style),
+            )
+        )
+    return [types.Content(role="user", parts=parts)]
+
+
+def generate_audio(client: genai.Client, model: str, contents: str | list[types.Content], speech_config: types.SpeechConfig) -> bytes:
     response = client.models.generate_content(
         model=model,
-        contents=text,
+        contents=contents,
         config=types.GenerateContentConfig(
             response_modalities=["AUDIO"],
             speech_config=speech_config,
@@ -184,7 +234,9 @@ def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     input_path = Path(args.input).expanduser().resolve()
     output_base = Path(args.output_dir).expanduser().resolve()
+    print(f"Loading transcript: {input_path}", flush=True)
     transcript = require_file(input_path)
+    print(f"Loaded {len(transcript):,} characters", flush=True)
     api_key = os.environ.get(args.api_key_env)
     if not api_key:
         raise SystemExit(f"Missing API key env var: {args.api_key_env}")
@@ -193,11 +245,19 @@ def main(argv: list[str] | None = None) -> int:
     turns = transcript_to_turns(transcript)
     used_speakers = sorted({turn.speaker for turn in turns if turn.speaker})
     missing = [speaker for speaker in used_speakers if speaker not in speaker_voices]
-    for speaker in missing:
-        speaker_voices[speaker] = args.voice
+    for index, speaker in enumerate(missing):
+        speaker_voices[speaker] = args.voice if index == 0 else args.second_voice
 
     chunks = chunk_turns(turns, args.chunk_chars)
+    print(f"Detected {len(turns)} transcript turn(s)", flush=True)
+    print(f"Prepared {len(chunks)} chunk(s)", flush=True)
+    print(f"Using model: {args.model}", flush=True)
+    print(f"Using default voice: {args.voice}", flush=True)
+    print(f"Using default second voice: {args.second_voice}", flush=True)
+    if speaker_voices:
+        print(f"Speaker voices: {speaker_voices}", flush=True)
     out_dir = safe_output_dir(output_base, input_path, args.overwrite)
+    print(f"Output directory: {out_dir}", flush=True)
     client = genai.Client(api_key=api_key)
     speech_config = multi_speaker_config(speaker_voices, args.voice)
     multi_speaker = len(speaker_voices) > 1
@@ -205,11 +265,13 @@ def main(argv: list[str] | None = None) -> int:
     audio_paths: list[str] = []
     for index, chunk in enumerate(chunks, start=1):
         chunk_text = render_chunk_text(chunk, args.style, multi_speaker)
-        audio = generate_audio(client, args.model, chunk_text, speech_config)
+        contents = build_multi_speaker_contents(chunk, args.style) if multi_speaker else chunk_text
+        print(f"Generating chunk {index}/{len(chunks)} ({len(chunk_text):,} characters)...", flush=True)
+        audio = generate_audio(client, args.model, contents, speech_config)
         audio_path = out_dir / f"chunk-{index:03d}.wav"
         audio_path.write_bytes(audio)
         audio_paths.append(str(audio_path))
-        print(f"Wrote {audio_path}")
+        print(f"Wrote {audio_path} ({len(audio):,} bytes)", flush=True)
         time.sleep(0.2)
 
     metadata = {
@@ -218,12 +280,14 @@ def main(argv: list[str] | None = None) -> int:
         "model": args.model,
         "voice": args.voice,
         "speaker_voices": speaker_voices,
+        "second_voice": args.second_voice,
         "style": args.style,
         "chunk_chars": args.chunk_chars,
         "chunks": audio_paths,
     }
     (out_dir / "metadata.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
-    print(f"Wrote {out_dir / 'metadata.json'}")
+    print(f"Wrote {out_dir / 'metadata.json'}", flush=True)
+    print("Done", flush=True)
     return 0
 
 

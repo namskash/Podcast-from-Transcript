@@ -45,6 +45,7 @@ podcast-from-transcript \
   --output-dir outputs \
   --model gemini-3.8-flash-tts \
   --voice Ludo \
+  --second-speaker Tari \
   --style "natural podcast narration" \
   --chunk-chars 6000
 ```
@@ -53,7 +54,8 @@ podcast-from-transcript \
 - `--output-dir`, `-o`: output folder, default `outputs`
 - `--api-key-env`: API key environment variable, default `GEMINI_API_KEY`
 - `--model`: Gemini TTS model
-- `--voice`: default voice
+- `--voice`: default first voice
+- `--second-speaker`: default second speaker voice
 - `--style`: speaking style prompt
 - `--chunk-chars`: approximate max characters per chunk
 - `--overwrite`: replace an existing output folder
@@ -76,7 +78,7 @@ podcast-from-transcript \
   --speaker Guest=Tari
 ```
 
-Repeat `--speaker NAME=VOICE` for each speaker. Speakers without an explicit mapping use `--voice`.
+Repeat `--speaker NAME=VOICE` for each speaker. Without explicit mappings, the first detected speaker uses `--voice` and the second uses `--second-speaker`.
 
 ## Metadata
 
