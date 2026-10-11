@@ -1,99 +1,89 @@
 # Podcast From Transcript
 
-Generate podcast audio from transcript files with Gemini TTS.
+Generate podcast-style audio from a transcript file using Gemini TTS.
 
-This project is transcript-source agnostic. A transcript can come from any folder, repository, or generation workflow. The tool reads a transcript file, sends the text to Gemini TTS, and writes audio files to an output directory.
-
-## Goals
-
-- Convert transcript files to podcast audio.
-- Support configurable Gemini TTS settings.
-- Keep input and output paths configurable.
-- Make each run reproducible.
-- Keep secrets out of source code.
-
-## Non-Goals
-
-- This project does not manage transcript creation.
-- This project does not require transcripts to live in this repository.
-- This project does not commit generated audio files by default.
-
-## Expected Workflow
-
-1. Provide a transcript file path.
-2. Select an output directory.
-3. Configure Gemini TTS settings.
-4. Run the generation script.
-5. Review the generated audio files.
-
-Example command shape:
+## Setup
 
 ```bash
-python generate_podcast.py \
-  --input /path/to/transcript.md \
-  --output-dir outputs \
-  --voice default
-```
-
-The exact command can change as the implementation develops.
-
-## Configuration
-
-Use environment variables for API credentials.
-
-Example:
-
-```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e .
 export GEMINI_API_KEY="your-api-key"
 ```
 
-Do not hardcode API keys in source files, config files, or scripts.
+## Basic usage
 
-Common configuration values:
-
-- Transcript input path
-- Output directory
-- Gemini model name
-- Voice name
-- Audio format
-- Chunk size
-- Retry settings
-
-## Output Structure
-
-Recommended output paths:
-
-```text
-outputs/
-  transcript-name/
-    chunk-001.mp3
-    chunk-002.mp3
-    final.mp3
-    metadata.json
+```bash
+podcast-from-transcript \
+  --input /path/to/transcript.md \
+  --output-dir outputs
 ```
 
-Use stable names for chunk files. This makes retries and debugging easier.
+Output is written to:
 
-## Safety
+```text
+outputs/<transcript-name>/
+  chunk-001.wav
+  metadata.json
+```
 
-- Do not overwrite existing audio files without confirmation.
-- Do not store secrets in git.
-- Do not commit generated audio unless required.
-- Log the input path, output path, and model settings for each run.
+Long transcripts are split into ordered chunks:
 
-## Development Notes
+```text
+outputs/<transcript-name>/
+  chunk-001.wav
+  chunk-002.wav
+  chunk-003.wav
+  metadata.json
+```
 
-Keep the code small and clear.
+## Options
 
-Preferred design:
+```bash
+podcast-from-transcript \
+  --input /path/to/transcript.md \
+  --output-dir outputs \
+  --model gemini-3.8-flash-tts \
+  --voice Ludo \
+  --style "natural podcast narration" \
+  --chunk-chars 6000
+```
 
-- One command-line entry point
-- Configurable input and output paths
-- Clear validation before TTS calls
-- Useful error messages
-- Repeatable output names
-- Optional chunking for long transcripts
+- `--input`, `-i`: transcript file path
+- `--output-dir`, `-o`: output folder, default `outputs`
+- `--api-key-env`: API key environment variable, default `GEMINI_API_KEY`
+- `--model`: Gemini TTS model
+- `--voice`: default voice
+- `--style`: speaking style prompt
+- `--chunk-chars`: approximate max characters per chunk
+- `--overwrite`: replace an existing output folder
 
-## License
+## Speaker voices
 
-No license is defined yet.
+For speaker-labeled transcripts:
+
+```text
+Host: Welcome back.
+Guest: Thanks for having me.
+```
+
+Map speakers to voices:
+
+```bash
+podcast-from-transcript \
+  --input /path/to/transcript.md \
+  --speaker Host=Ludo \
+  --speaker Guest=Tari
+```
+
+Repeat `--speaker NAME=VOICE` for each speaker. Speakers without an explicit mapping use `--voice`.
+
+## Metadata
+
+Each run writes `metadata.json` with the input path, output path, model, voice settings, style, chunk size, and generated chunk files.
+
+## Notes
+
+- Existing output folders are not overwritten unless `--overwrite` is passed.
+- Keep API keys in environment variables.
+- Generated audio is ignored by git unless you intentionally add it.
