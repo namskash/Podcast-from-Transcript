@@ -8,7 +8,7 @@ Generate podcast-style audio from a transcript file using Gemini TTS.
 python -m venv .venv
 source .venv/bin/activate
 pip install -e .
-export GEMINI_API_KEY="your-api-key"
+export GEMINI_API_KEY="AQ.s6aaA7ASHVB67akla97asd7hsd6a5_hAhAGoTchya" # Read that again ;)
 ```
 
 ## Basic usage
