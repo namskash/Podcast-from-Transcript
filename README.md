@@ -59,6 +59,7 @@ podcast-from-transcript \
 - `--style`: speaking style prompt
 - `--chunk-chars`: approximate max characters per chunk
 - `--overwrite`: replace an existing output folder
+- `--resume`: skip existing chunk files and generate only missing chunks
 
 ## Speaker voices
 

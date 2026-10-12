@@ -48,6 +48,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--style", default="natural podcast narration", help="Speaking style")
     parser.add_argument("--chunk-chars", type=int, default=6000, help="Approx max chars per chunk")
     parser.add_argument("--overwrite", action="store_true", help="Overwrite an existing output folder")
+    parser.add_argument("--resume", action="store_true", help="Skip existing chunk files and generate only missing chunks")
     return parser.parse_args(argv)
 
 
@@ -222,10 +223,10 @@ def generate_audio(client: genai.Client, model: str, contents: str | list[types.
     return data
 
 
-def safe_output_dir(base: Path, transcript: Path, overwrite: bool) -> Path:
+def safe_output_dir(base: Path, transcript: Path, overwrite: bool, resume: bool) -> Path:
     out_dir = base / transcript.stem
-    if out_dir.exists() and not overwrite:
-        raise SystemExit(f"Output directory already exists: {out_dir}\nUse --overwrite to replace files.")
+    if out_dir.exists() and not overwrite and not resume:
+        raise SystemExit(f"Output directory already exists: {out_dir}\nUse --overwrite to replace files or --resume to skip existing chunks.")
     out_dir.mkdir(parents=True, exist_ok=True)
     return out_dir
 
@@ -256,7 +257,9 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Using default second voice: {args.second_voice}", flush=True)
     if speaker_voices:
         print(f"Speaker voices: {speaker_voices}", flush=True)
-    out_dir = safe_output_dir(output_base, input_path, args.overwrite)
+    if args.overwrite and args.resume:
+        raise SystemExit("Use either --overwrite or --resume, not both.")
+    out_dir = safe_output_dir(output_base, input_path, args.overwrite, args.resume)
     print(f"Output directory: {out_dir}", flush=True)
     client = genai.Client(api_key=api_key)
     speech_config = multi_speaker_config(speaker_voices, args.voice)
@@ -264,13 +267,16 @@ def main(argv: list[str] | None = None) -> int:
 
     audio_paths: list[str] = []
     for index, chunk in enumerate(chunks, start=1):
+        audio_path = out_dir / f"chunk-{index:03d}.wav"
+        audio_paths.append(str(audio_path))
+        if args.resume and audio_path.exists():
+            print(f"Skipping existing chunk {index}/{len(chunks)}: {audio_path}", flush=True)
+            continue
         chunk_text = render_chunk_text(chunk, args.style, multi_speaker)
         contents = build_multi_speaker_contents(chunk, args.style) if multi_speaker else chunk_text
         print(f"Generating chunk {index}/{len(chunks)} ({len(chunk_text):,} characters)...", flush=True)
         audio = generate_audio(client, args.model, contents, speech_config)
-        audio_path = out_dir / f"chunk-{index:03d}.wav"
         audio_path.write_bytes(audio)
-        audio_paths.append(str(audio_path))
         print(f"Wrote {audio_path} ({len(audio):,} bytes)", flush=True)
         time.sleep(0.2)
 
@@ -284,6 +290,7 @@ def main(argv: list[str] | None = None) -> int:
         "style": args.style,
         "chunk_chars": args.chunk_chars,
         "chunks": audio_paths,
+        "resume": args.resume,
     }
     (out_dir / "metadata.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
     print(f"Wrote {out_dir / 'metadata.json'}", flush=True)
