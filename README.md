@@ -8,12 +8,10 @@ This project turns a transcript into podcast-style audio using Gemini TTS.
 
 <div align="center">
   <a href="https://youtu.be/qjjYCdYZ6eE">
-    <img src="https://img.youtube.com/vi/qjjYCdYZ6eE/hqdefault.jpg" alt="Listen to the sample">
+    <img src="./docs/Thumbnail.png" alt="Sample: Listen on YouTube">
   </a>
   <br>
   <a href="https://youtu.be/qjjYCdYZ6eE">Listen to the sample on YouTube</a>
-  <br>
-  <a href="./outputs/Sample-Output.mp3" download>Download the sample MP3</a>
 </div>
 
 ## Setup
@@ -110,7 +108,21 @@ Repeat `--speaker NAME=VOICE` for each speaker. Without explicit mappings, the f
 
 ## CLI Helper/Peripheral Commands
 
-- `lsvoices`
+### `lsvoices`
+
+`lsvoices` queries the Gemini API and lists available TTS voices. It requires `GEMINI_API_KEY` to be set.
+
+List the project's preferred voice shortlist:
+
+```bash
+lsvoices --selected # Or -s for short
+```
+
+List every voice currently available from the API:
+
+```bash
+lsvoices --all     # Or -a for short
+```
 
 ## `.pi` stuff (Optional)
 
