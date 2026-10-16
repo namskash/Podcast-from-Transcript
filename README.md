@@ -1,6 +1,6 @@
 # Podcast From Transcript
 
-Generate podcast-style audio from a transcript file using Gemini TTS.
+Generate podcast-style audio from a transcript file using Gemini TTS :)
 
 ## Setup
 
@@ -13,11 +13,12 @@ pip install -e .
 direnv allow
 ```
 
-Set the API key in your environment:
+Set the API key in your `.zshrc` / `.bashrc` / ... :
+_(or if you're sophisticated like me, then in your dedicated tokens file)_
 
 ```bash
 export GEMINI_API_KEY="AQ.s6aaA7ASHVB67akla97asd7hsd6a5_hAhAGoTchya"
-# Read the key again ;)
+# If you thought that I accidentally leaked my API key, read it again ;)
 ```
 
 ## Basic usage
@@ -28,7 +29,7 @@ podcast-from-transcript \
   --output-dir outputs
 ```
 
-Output is written to:
+_Output is written to_:
 
 ```text
 outputs/<transcript-name>/
@@ -36,7 +37,7 @@ outputs/<transcript-name>/
   metadata.json
 ```
 
-Long transcripts are split into ordered chunks:
+_Long transcripts are split into ordered chunks_:
 
 ```text
 outputs/<transcript-name>/
@@ -90,12 +91,32 @@ podcast-from-transcript \
 
 Repeat `--speaker NAME=VOICE` for each speaker. Without explicit mappings, the first detected speaker uses `--voice` and the second uses `--second-speaker`.
 
-## Metadata
+> [!Note]
+> Each run writes `metadata.json` with the input path, output path, model, voice settings, style, chunk size, and generated chunk files.
+
+## CLI Helper/Peripheral Commands
 
 - `lsvoices`
 
-## Notes
+## `.pi` stuff (Optional)
+
+> I have added some prompts (commands in Claude Code lingo) that I use in this project to the repo.
+
+- `/validate-transcript <path-to-transcript-md>`: checks `transcripts/expected-transcript-format.md` without modifying files.
+
+---
+
+## Notes from Yours Truly
 
 - Existing output folders are not overwritten unless `--overwrite` is passed.
 - Keep API keys in environment variables.
 - Generated audio is ignored by git unless you intentionally add it.
+- Use `gemini-3.8-flash-lite-tts` if you don't want to run out of credits really quickly.
+  - TTS consumes a lot of tokens.
+  - So ensure that **you DON'T have dynamic billing enabled in [Google AI Studio](https://aistudio.google.com/projects)!**
+- If you run out of tokens mid-way of a podcast generation, use the `--resume` flag when you run it next.
+  - Existing `chunk-###.wav` files are skipped and only missing chunks are generated.
+  - NOTE: It cannot be combined with `--overwrite`.
+
+_Happy AI Podcasting! :)_
+\- NK
