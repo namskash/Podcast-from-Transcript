@@ -6,3 +6,4 @@ outputs/
 
 # Raw Transcripts don't belong in the repo
 transcripts/*.md
+!transcripts/expected-transcript-format.md
