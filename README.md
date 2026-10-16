@@ -6,9 +6,15 @@ Generate podcast-style audio from a transcript file using Gemini TTS :)
 
 This project turns a transcript into podcast-style audio using Gemini TTS.
 
-[![Listen to the sample](https://img.youtube.com/vi/qjjYCdYZ6eE/hqdefault.jpg)](https://youtu.be/qjjYCdYZ6eE)
-
-<a href="./outputs/Sample-Output.mp3" download>Download the sample MP3</a>
+<div align="center">
+  <a href="https://youtu.be/qjjYCdYZ6eE">
+    <img src="https://img.youtube.com/vi/qjjYCdYZ6eE/hqdefault.jpg" alt="Listen to the sample">
+  </a>
+  <br>
+  <a href="https://youtu.be/qjjYCdYZ6eE">Listen to the sample on YouTube</a>
+  <br>
+  <a href="./outputs/Sample-Output.mp3" download>Download the sample MP3</a>
+</div>
 
 ## Setup
 
