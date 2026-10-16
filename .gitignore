@@ -2,7 +2,8 @@
 .venv/
 __pycache__/
 *.egg-info/
-outputs/
+outputs/*
+!outputs/Sample-Output.mp3
 
 # Raw Transcripts don't belong in the repo
 transcripts/*.md
