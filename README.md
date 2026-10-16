@@ -2,6 +2,14 @@
 
 Generate podcast-style audio from a transcript file using Gemini TTS :)
 
+## Hear an example
+
+This project turns a transcript into podcast-style audio using Gemini TTS.
+
+[![Listen to the sample](https://img.youtube.com/vi/qjjYCdYZ6eE/hqdefault.jpg)](https://youtu.be/qjjYCdYZ6eE)
+
+<a href="./outputs/Sample-Output.mp3" download>Download the sample MP3</a>
+
 ## Setup
 
 This project uses [direnv](https://direnv.net/) to activate the virtual environment.
@@ -120,3 +128,12 @@ Repeat `--speaker NAME=VOICE` for each speaker. Without explicit mappings, the f
 
 _Happy AI Podcasting! :)_
 \- NK
+
+---
+
+## Icons used in the Thumbnail - Credits
+
+- [Sound waves icons created by Arkinasi - Flaticon](https://www.flaticon.com/free-icons/sound-waves)
+- [Transcription icons created by Magnific - Flaticon](https://www.flaticon.com/free-icons/transcription)
+
+P.S: The thumbnail was designed by me :)
