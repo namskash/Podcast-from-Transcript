@@ -4,11 +4,20 @@ Generate podcast-style audio from a transcript file using Gemini TTS.
 
 ## Setup
 
+This project uses [direnv](https://direnv.net/) to activate the virtual environment.
+
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 pip install -e .
-export GEMINI_API_KEY="AQ.s6aaA7ASHVB67akla97asd7hsd6a5_hAhAGoTchya" # Read that again ;)
+direnv allow
+```
+
+Set the API key in your environment:
+
+```bash
+export GEMINI_API_KEY="AQ.s6aaA7ASHVB67akla97asd7hsd6a5_hAhAGoTchya"
+# Read the key again ;)
 ```
 
 ## Basic usage
@@ -83,7 +92,7 @@ Repeat `--speaker NAME=VOICE` for each speaker. Without explicit mappings, the f
 
 ## Metadata
 
-Each run writes `metadata.json` with the input path, output path, model, voice settings, style, chunk size, and generated chunk files.
+- `lsvoices`
 
 ## Notes
 
