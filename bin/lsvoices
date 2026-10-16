@@ -1,0 +1,145 @@
+#!/usr/bin/env python3
+"""List voices available from the Gemini API."""
+
+import argparse
+import json
+import os
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+from pathlib import Path
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="List Gemini TTS voices.")
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("-s", "--selected", action="store_true", help="Show preferred voices")
+    group.add_argument("-a", "--all", action="store_true", help="Show all available voices")
+    return parser.parse_args()
+
+
+def selected_voice_names() -> list[str]:
+    path = Path(__file__).resolve().parents[1] / "docs" / "gemini-voice-selections.md"
+    return [
+        line[2:].strip()
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line.startswith("- ")
+    ]
+
+
+def voice_name(voice: dict) -> str:
+    # Prefer the API identifier; support older response variants too.
+    name = (
+        voice.get("id")
+        or voice.get("displayName")
+        or voice.get("display_name")
+        or voice.get("voiceName")
+        or voice.get("voice_name")
+        or voice.get("name")
+        or ""
+    )
+    return str(name).removeprefix("voices/")
+
+
+def voice_identifiers(voice: dict) -> set[str]:
+    values = {
+        voice_name(voice),
+        voice.get("id", ""),
+        voice.get("displayName", ""),
+        voice.get("display_name", ""),
+        voice.get("voiceName", ""),
+        voice.get("voice_name", ""),
+        voice.get("name", ""),
+    }
+    return {str(value).removeprefix("voices/").casefold() for value in values if value}
+
+
+def print_status(message: str, detail: str | None = None) -> None:
+    if sys.stdout.isatty():
+        print(f"\033[32m{message}\033[0m")
+    else:
+        print(message)
+    if detail:
+        print(detail)
+    print()
+
+
+def print_voices(rows: list[tuple[str, str]]) -> None:
+    if not rows:
+        return
+    use_color = sys.stdout.isatty()
+    name_color = "\033[97m"  # bright white
+    description_color = "\033[90m"  # light grey
+    reset = "\033[0m"
+    for name, description in rows:
+        formatted_name = f"{name_color}{name}{reset}" if use_color else name
+        if description and use_color:
+            description = f"{description_color}{description}{reset}"
+        print(f"{formatted_name}: {description}" if description else formatted_name)
+
+
+def main() -> int:
+    args = parse_args()
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        print("Missing GEMINI_API_KEY", file=sys.stderr)
+        return 1
+
+    if args.all:
+        print_status("Fetching all voices from the API...")
+    else:
+        print_status(
+            "Fetching descriptions of your selected/preferred shortlist of voices...",
+            "Shortlist present in: docs/gemini-voice-selections.md",
+        )
+
+    voices: list[dict] = []
+    page_token: str | None = None
+    while True:
+        params = {"key": api_key}
+        if page_token:
+            params["pageToken"] = page_token
+        url = "https://generativelanguage.googleapis.com/v1beta/voices?" + urllib.parse.urlencode(params)
+        request = urllib.request.Request(url, headers={"Accept": "application/json"})
+
+        try:
+            with urllib.request.urlopen(request) as response:
+                payload = json.load(response)
+        except urllib.error.HTTPError as exc:
+            detail = exc.read().decode("utf-8", errors="replace")
+            print(f"Gemini API request failed ({exc.code}): {detail}", file=sys.stderr)
+            return 1
+        except urllib.error.URLError as exc:
+            print(f"Gemini API request failed: {exc.reason}", file=sys.stderr)
+            return 1
+
+        voices.extend(payload.get("voices", []))
+        page_token = payload.get("nextPageToken") or payload.get("next_page_token")
+        if not page_token:
+            break
+
+    if args.all:
+        rows = [
+            (voice_name(voice), voice.get("description", ""))
+            for voice in voices
+        ]
+    else:
+        available = {
+            identifier: voice
+            for voice in voices
+            for identifier in voice_identifiers(voice)
+        }
+        rows = []
+        for preferred_name in selected_voice_names():
+            voice = available.get(preferred_name.casefold())
+            rows.append(
+                (preferred_name, voice.get("description", "") if voice else "")
+            )
+
+    print_voices(rows)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
