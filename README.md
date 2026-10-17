@@ -7,11 +7,11 @@ Turn a thought into a podcast :)
 This project turns a transcript into podcast-style audio using Gemini TTS.
 
 <div align="center">
-  <a href="https://youtu.be/Bqr9OCaVjZo">
-    <img src="./docs/Thumbnail.png" alt="Quick demo: Watch on YouTube">
-  </a>
+  <em><a href="https://youtu.be/Bqr9OCaVjZo">Watch a quick demo on YouTube</a></em>
   <br>
-  <em><a href="https://youtu.be/Bqr9OCaVjZo">Watch the quick demo on YouTube</a></em>
+  <a href="https://youtu.be/Bqr9OCaVjZo">
+    <img src="./docs/Thumbnail.png" width="700" alt="Quick demo: Watch on YouTube">
+  </a>
   <br><br>
   <small><em><a href="https://youtu.be/qjjYCdYZ6eE">or listen to a sample on YouTube</a></em></small>
 </div>
