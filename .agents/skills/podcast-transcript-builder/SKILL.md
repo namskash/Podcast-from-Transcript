@@ -1,9 +1,11 @@
 ---
 name: podcast-transcript-builder
-description: Enforce the project’s podcast transcript format when creating a transcript.
+description: Use only when creating a new podcast transcript; do not use for validating or processing an existing transcript.
 ---
 
 # Podcast Transcript Format
+
+**Scope:** Use this skill only while creating a new transcript. Do not invoke it for reading, validating, converting, or generating audio from an existing transcript.
 
 Read `@transcripts/expected-transcript-format.md`.
 
