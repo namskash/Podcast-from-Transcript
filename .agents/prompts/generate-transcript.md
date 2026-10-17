@@ -21,7 +21,7 @@ Use the `podcast-transcript-builder` skill for transcript-format and speaker-cha
    At the start of this step, run:
 
    ```bash
-   python .pi/scripts/choice_history.py begin
+   python .agents/scripts/choice_history.py begin
    ```
 
    Use the exact returned temporary stage-file path in every subsequent staging and persistence command. Call this path `STAGE_FILE` in the workflow below. Stage custom selections there; do not update the persistent history during the questions.
@@ -35,13 +35,13 @@ Use the `podcast-transcript-builder` skill for transcript-format and speaker-cha
    For each question, first run:
 
    ```bash
-   python .pi/scripts/choice_history.py list <choice-key>
+   python .agents/scripts/choice_history.py list <choice-key>
    ```
 
    Offer the returned choices sorted by usage count, along with the default. Do not add a separate Custom option; when using the questionnaire, its Other option handles free-text answers. Do not stage a default selection. Whenever the user selects a non-default option, stage it immediately:
 
    ```bash
-   python .pi/scripts/choice_history.py stage <STAGE_FILE> <choice-key> "<selected value>"
+   python .agents/scripts/choice_history.py stage <STAGE_FILE> <choice-key> "<selected value>"
    ```
 
    Use these questions and defaults:
@@ -86,14 +86,14 @@ Use the `podcast-transcript-builder` skill for transcript-format and speaker-cha
    - Run:
 
    ```bash
-   python .pi/skills/podcast-transcript-builder/scripts/validate_format.py ./transcripts/<slug>.md
+   python .agents/skills/podcast-transcript-builder/scripts/validate_format.py ./transcripts/<slug>.md
    ```
 
    - Fix every validation error and run the validator again.
    - Persist the staged custom choices only after the transcript has been successfully saved and validated:
 
    ```bash
-   python .pi/scripts/choice_history.py persist <STAGE_FILE>
+   python .agents/scripts/choice_history.py persist <STAGE_FILE>
    ```
 
    - Report the final saved transcript path and any important assumptions.

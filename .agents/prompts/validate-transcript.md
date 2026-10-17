@@ -14,7 +14,7 @@ Read and follow the format defined in `transcripts/expected-transcript-format.md
 First, run the deterministic format validator from the project root:
 
 ```bash
-python .pi/skills/podcast-transcript-builder/scripts/validate_format.py "${1}"
+python .agents/skills/podcast-transcript-builder/scripts/validate_format.py "${1}"
 ```
 
 Treat a non-zero exit status as a format failure and report the validator’s errors. Do not duplicate checks that the script already performs. Then perform the remaining dynamic/content checks:

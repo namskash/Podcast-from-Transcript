@@ -126,9 +126,10 @@ List every voice currently available from the API:
 lsvoices --all     # Or -a for short
 ```
 
-## `.pi` stuff (Optional)
+## Agent prompts and skills (Optional)
 
 > I have added some prompts ("commands" in Claude Code lingo) that give you superpowers!
+> If you use Claude Code, Codex, OpenCode, ..., create symlinks to `.agents/`.
 
 ### `/generate-transcript [topic-or-source]`
 

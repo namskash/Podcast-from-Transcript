@@ -25,4 +25,4 @@ Keep dialogue as spoken text only. Use bracketed pause cues such as `[pause 3 se
 
 Mark every humour bit with a standalone `<!-- HUMOR -->` line immediately before it. The marker is not spoken and is removed by the audio pipeline.
 
-Save the transcript in `./transcripts/` and, from the project root, run `.pi/skills/podcast-transcript-builder/scripts/validate_format.py <transcript-path>` at the end. Fix any validation errors before finishing.
+Save the transcript in `./transcripts/` and, from the project root, run `.agents/skills/podcast-transcript-builder/scripts/validate_format.py <transcript-path>` at the end. Fix any validation errors before finishing.
