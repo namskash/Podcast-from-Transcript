@@ -1,6 +1,6 @@
 # Podcast From Transcript
 
-Generate podcast-style audio from a transcript file using Gemini TTS :)
+Turn a thought into a podcast :)
 
 ## Hear an example
 
@@ -126,16 +126,32 @@ lsvoices --all     # Or -a for short
 
 ## `.pi` stuff (Optional)
 
-> I have added some prompts (commands in Claude Code lingo) that I use in this project to the repo.
+> I have added some prompts ("commands" in Claude Code lingo) that give you superpowers!
 
-- `/validate-transcript <path-to-transcript-md>`: checks `transcripts/expected-transcript-format.md` without modifying files.
+### `/generate-transcript [topic-or-source]`
+
+Turns an idea or source into a polished podcast transcript:
+
+1. Collects the topic and focus areas.
+2. Configures length, speakers, personalities, humor, and references one question at a time.
+3. Drafts human-like, personality-driven dialogue.
+4. Marks humor with `<!-- HUMOR -->` and validates the format.
+5. Saves to `./transcripts/<slug>.md`.
+
+Length options: short (2–3 minutes), standard (5 minutes, default), extended (10 minutes), or long (20 minutes).
+
+Custom selections are staged and persisted after successful validation in `docs/choice-selection-history.json`; references are tracked individually by usage count.
+
+### `/validate-transcript <path-to-transcript-md>`
+
+Checks `transcripts/expected-transcript-format.md` without modifying files.
 
 ---
 
 ## Notes from Yours Truly
 
-- Existing output folders are not overwritten unless `--overwrite` is passed.
-- Keep API keys in environment variables.
+- This project remembers the choices you made while generating transcripts, so that you can re-use them!
+- Keep API keys wherever you store environment variables.
 - Generated audio is ignored by git unless you intentionally add it.
 - Use `gemini-3.8-flash-lite-tts` if you don't want to run out of credits really quickly.
   - TTS consumes a lot of tokens.
