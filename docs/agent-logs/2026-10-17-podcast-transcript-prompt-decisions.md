@@ -17,7 +17,7 @@ Date: 2026-10-17
 - Offer previous choices from the history file in future questions, sorted by usage count descending; allow free-text choices where appropriate.
 - Do not add a separate Custom questionnaire option; use the questionnaire’s Other option for free-text answers.
 - Ask selections for:
-  1. Podcast length: short (~5 minutes), standard (~10 minutes, default), extended (~20 minutes), or long (~30 minutes).
+  1. Podcast length: short (~2–3 minutes), standard (~5 minutes, default), extended (~10 minutes), or long (~20 minutes).
   2. Number of speakers: 1, 2 (default), or 3.
   3. Speaker names or labels: `Coach` and `Engineer` (default), or use Other for different labels.
   4. Personality description for each speaker, either a previous history choice or Other; default to distinct, natural personalities.

@@ -47,7 +47,7 @@ Use the `podcast-transcript-builder` skill for transcript-format and speaker-cha
    Use these questions and defaults:
 
    1. **How long should the podcast be?**
-      - Options: short (about 5 minutes), standard (about 10 minutes, **default**), extended (about 20 minutes), or long (about 30 minutes)
+      - Options: short (about 2–3 minutes), standard (about 5 minutes, **default**), extended (about 10 minutes), or long (about 20 minutes)
       - Choice key: `podcast_length`
 
    2. **How many speakers?**
@@ -69,7 +69,9 @@ Use the `podcast-transcript-builder` skill for transcript-format and speaker-cha
       - If one speaker is serious and another humorous, put jokes primarily in the humorous speaker’s dialogue.
 
    6. **What references, metaphors, or comparisons should be used?**
-      - Options: none (**default**), or selected references such as cricket, Linux, badminton, painting, or Rubik’s Cube
+      - Use a multi-select question when the questionnaire supports it.
+      - Options: none (**default**), or individual references such as cricket, Linux, badminton, painting, or Rubik’s Cube.
+      - If multiple references are selected, stage each reference as a separate value under `references`; never stage the combined selection as one value.
       - Choice key: `references`
 
 4. **Draft**
