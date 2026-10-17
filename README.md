@@ -11,9 +11,9 @@ This project turns a transcript into podcast-style audio using Gemini TTS.
     <img src="./docs/Thumbnail.png" alt="Quick demo: Watch on YouTube">
   </a>
   <br>
-  <a href="https://youtu.be/Bqr9OCaVjZo">Watch the quick demo on YouTube</a>
-  <br>
-  <a href="https://youtu.be/qjjYCdYZ6eE">or listen to the sample on YouTube</a>
+  <em><a href="https://youtu.be/Bqr9OCaVjZo">Watch the quick demo on YouTube</a></em>
+  <br><br>
+  <small><em><a href="https://youtu.be/qjjYCdYZ6eE">or listen to a sample on YouTube</a></em></small>
 </div>
 
 ## Setup
