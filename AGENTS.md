@@ -8,11 +8,17 @@ The project should be transcript-source agnostic: transcripts may come from any 
 
 ## Expected Workflow
 
-1. Accept a transcript file path as input.
+1. For audio generation, accept a transcript file path as input.
 2. Read and validate the transcript.
 3. Send transcript content to Gemini TTS.
-4. Save generated audio to a clear output path.
+4. Save ordered WAV chunks and `metadata.json` to a clear output path.
 5. Log the transcript input path, model/config used, and generated audio path.
+
+## Transcript Skill Scope
+
+- Invoke `.agents/skills/podcast-transcript-builder/SKILL.md` only when creating a new transcript.
+- Do not invoke it when reading, validating, converting, or generating audio from an existing transcript.
+- For validation only, use `/validate-transcript <path-to-transcript-md>` or the validator directly; it must not modify the transcript.
 
 ## Configuration
 
@@ -42,10 +48,9 @@ The project should be transcript-source agnostic: transcripts may come from any 
 
 ## Outputs
 
-Generated files should use descriptive names, for example:
+Generated audio uses descriptive paths, for example:
 
-- `outputs/<transcript-name>.mp3`
-- `outputs/<transcript-name>/chunk-001.mp3`
-- `outputs/<transcript-name>/final.mp3`
+- `outputs/<transcript-name>/chunk-001.wav`
+- `outputs/<transcript-name>/metadata.json`
 
-Do not overwrite these outputs without confirmation.
+Do not overwrite existing generated audio without confirmation.
