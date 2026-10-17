@@ -5,6 +5,9 @@ __pycache__/
 outputs/*
 !outputs/Sample-Output.mp3
 
+# Temporary choice staging files
+tmp/
+
 # Raw Transcripts don't belong in the repo
 transcripts/*.md
 !transcripts/expected-transcript-format.md

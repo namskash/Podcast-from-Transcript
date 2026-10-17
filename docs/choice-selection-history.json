@@ -1,0 +1,16 @@
+{
+  "speaker_labels": {
+    "custom": 1,
+    "Linux expert and Linux newbie": 1
+  },
+  "personalities": {
+    "Linux expert: Wry humour, has seen it all. Wise, crisp, patient": 1,
+    "Linux newbie: Curious, passionate about Linux, asks first-principles-based questions": 1
+  },
+  "humour_level": {
+    "frequent": 1
+  },
+  "references": {
+    "cricket, painting, Rubik’s Cube": 1
+  }
+}

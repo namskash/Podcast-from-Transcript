@@ -8,7 +8,7 @@ import re
 import sys
 from pathlib import Path
 
-SPEAKER_RE = re.compile(r"^(Coach|Engineer):\s+(.+)$")
+SPEAKER_RE = re.compile(r"^([A-Za-z][\w .'-]{0,48}):\s+(.+)$")
 PAUSE_RE = re.compile(r"^\[pause \d+ seconds\]$")
 HUMOR_MARKER = "<!-- HUMOR -->"
 QUOTED_SPEAKER_RE = re.compile(r'^"[^"\n]+":')
@@ -82,7 +82,7 @@ def validate(path: Path) -> list[str]:
 
         if QUOTED_SPEAKER_RE.match(stripped):
             errors.append(
-                f"line {number}: speaker label must be Coach: or Engineer:, without quotes"
+                f"line {number}: speaker label must be an unquoted name or label followed by a colon"
             )
             current_speaker = None
             continue
@@ -92,7 +92,7 @@ def validate(path: Path) -> list[str]:
             continue
 
         errors.append(
-            f"line {number}: expected Coach: or Engineer: followed by spoken text"
+            f"line {number}: expected a speaker label followed by a colon and spoken text"
         )
         current_speaker = None
 
