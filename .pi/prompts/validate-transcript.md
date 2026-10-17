@@ -11,17 +11,20 @@ Otherwise, validate the transcript at `${1}` before TTS generation. The transcri
 
 Read and follow the format defined in `transcripts/expected-transcript-format.md`. Read the transcript without modifying it.
 
-Check:
-- An optional title is allowed.
-- Every dialogue line starts with exactly `Coach:` or `Engineer:`.
-- Dialogue contains spoken text only.
-- Dialogue contains no Markdown formatting.
-- Each speaker turn is one line or one paragraph.
-- Pauses use bracketed timing cues such as `[pause 3 seconds]`.
+First, run the deterministic format validator from the project root:
+
+```bash
+python .pi/skills/podcast-transcript-builder/scripts/validate_format.py "${1}"
+```
+
+Treat a non-zero exit status as a format failure and report the validator’s errors. Do not duplicate checks that the script already performs. Then perform the remaining dynamic/content checks:
+- Dialogue contains spoken text only and no Markdown formatting.
+- Speaker labels are consistent and appropriate for the transcript; do not assume they must be `Coach:` or `Engineer:`.
 - Identify issues that could cause TTS or chunking problems.
+- Check that humor markers, if present, are standalone and placed immediately before the humor bit.
 
 Report:
-- Overall pass/fail status.
+- Overall pass/fail status, combining the script result and dynamic checks.
 - Specific errors with line or section references.
 - Warnings for likely TTS or chunking issues.
 - Concrete suggested corrections.
