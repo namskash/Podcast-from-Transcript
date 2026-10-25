@@ -76,7 +76,9 @@ Use the `podcast-transcript-builder` skill for transcript-format and speaker-cha
 
 4. **Draft**
    - Build a clear episode arc around the topic and focus areas.
-   - Draft human-like dialogue shaped by each speaker’s personality, with each voice distinct throughout.
+   - Write responsive, human-like dialogue shaped by each speaker’s personality.
+   - Vary turn length and include natural reactions, follow-ups, clarifications, and occasional rephrasing.
+   - Break up long explanations; use spoken phrasing and sentence fragments where natural.
    - Apply the selected humor level and references.
    - Mark every humor bit with a standalone `<!-- HUMOR -->` line.
 
