@@ -145,6 +145,12 @@ Length options: short (2–3 minutes), standard (5 minutes, default), extended (
 
 Custom selections are staged and persisted after successful validation in `docs/choice-selection-history.json`; references are tracked individually by usage count.
 
+### `/refine-humor <path-to-transcript-md>`
+
+Refines the humor in an existing transcript using a frontier model. It searches only the strategically placed `<!-- HUMOR -->` markers and nearby excerpts, reducing the context sent to the more expensive model. This supports a cost-efficient workflow: generate the full transcript with a cheaper model first, then use a frontier model for targeted humor improvements.
+
+The prompt edits the transcript in place, preserves technical accuracy and formatting, and does not generate audio.
+
 ### `/validate-transcript <path-to-transcript-md>`
 
 Checks `transcripts/expected-transcript-format.md` without modifying files.

@@ -19,6 +19,8 @@ The project should be transcript-source agnostic: transcripts may come from any 
 - Invoke `.agents/skills/podcast-transcript-builder/SKILL.md` only when creating a new transcript.
 - Do not invoke it when reading, validating, converting, or generating audio from an existing transcript.
 - For validation only, use `/validate-transcript <path-to-transcript-md>` or the validator directly; it must not modify the transcript.
+- `/refine-humor <path-to-transcript-md>` is a targeted editing pass for existing transcripts. Use a frontier model to improve only the excerpts around strategically placed `<!-- HUMOR -->` markers, rather than sending the entire transcript as context.
+- The intended workflow is to generate the complete transcript with a cheaper model first, then use `/refine-humor` for cost-efficient, high-quality humor refinement. It must preserve technical accuracy, speaker labels, markers, and formatting, and must not generate audio.
 
 ## Configuration
 
