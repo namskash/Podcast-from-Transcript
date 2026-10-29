@@ -74,12 +74,14 @@ Use the `podcast-transcript-builder` skill for transcript-format and speaker-cha
       - If multiple references are selected, stage each reference as a separate value under `references`; never stage the combined selection as one value.
       - Choice key: `references`
 
+   Humor and reference selections are preferences, not quotas. Skip any joke or reference that doesn’t fit naturally; choosing one does not require forcing it into the transcript.
+
 4. **Draft**
    - Build a clear episode arc around the topic and focus areas.
-   - Write responsive, human-like dialogue shaped by each speaker’s personality.
-   - Vary turn length and include natural reactions, follow-ups, clarifications, and occasional rephrasing.
-   - Break up long explanations; use spoken phrasing and sentence fragments where natural.
-   - Apply the selected humor level and references.
+   - Write responsive, human-like dialogue shaped by each speaker’s personality. Let the exchange respond to what was just said, but don’t force a reaction, question, or follow-up into every turn; these are options, not a turn-by-turn recipe.
+   - Vary turn length, break up long explanations, and use spoken phrasing and sentence fragments where natural.
+   - Define unfamiliar terms and concepts before using them as building blocks for further explanations. Order explanations from prerequisites to dependent ideas, using plain-language bridges where helpful.
+   - Use humor and references only when they fit naturally and clarify or enrich the discussion. Skip anything that feels forced, confusing, or distracting, regardless of the selected humor level or reference preferences.
    - Mark every humor bit with a standalone `<!-- HUMOR -->` line.
 
 5. **Save and validate**

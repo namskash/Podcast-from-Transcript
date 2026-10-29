@@ -14,7 +14,7 @@ Read `@transcripts/expected-transcript-format.md`.
 **Conversational structure:** Build an informative but genuinely conversational exchange.
 
 - Do not make every turn a polished question followed by a complete answer.
-- Include occasional reactions, acknowledgements, follow-up questions, clarifications, and gentle challenges.
+- Include reactions, acknowledgements, follow-up questions, clarifications, and gentle challenges where they arise naturally; these are options, not a turn-by-turn recipe. Don’t force a reaction or follow-up into every exchange.
 - Let speakers refer back to points made in preceding turns.
 - Vary turn length and rhythm, mixing short reactions with longer explanations.
 - Let one speaker react briefly before giving a fuller explanation.
@@ -22,6 +22,8 @@ Read `@transcripts/expected-transcript-format.md`.
 - Use contractions, spoken phrasing, and occasional sentence fragments where natural.
 - Allow minor, natural rephrasing or self-correction without adding awkwardness mechanically.
 - Use pauses only at meaningful topic transitions.
+- Define unfamiliar terms and concepts before relying on them to explain something else. Build explanations in an order that lets the listener follow the reasoning from simpler ideas to more complex ones.
+- Use humor, references, and metaphors only when they fit the speakers and the discussion. They are optional, not quotas: omit them when they feel forced. Keep jokes immediately understandable and avoid ones that obscure or distract from the explanation.
 
 Do:
 
