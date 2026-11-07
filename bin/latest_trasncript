@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+transcripts_dir="$repo_root/transcripts"
+
+latest_transcript="$(find "$transcripts_dir" -maxdepth 1 -type f -name '*.md' ! -name 'expected-transcript-format.md' -printf '%T@\t%p\n' | sort -nr | head -n 1 | cut -f2-)"
+
+if [[ -z "$latest_transcript" ]]; then
+  echo "No transcripts found in $transcripts_dir" >&2
+  exit 1
+fi
+
+exec bat "$latest_transcript"
